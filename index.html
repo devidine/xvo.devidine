@@ -1,55 +1,26 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+<!DOCTYPE html>
+<html>
+<head>
+  <title>아이디 목록</title>
+</head>
+<body>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDo6-4TyKLDlWzem_53jWvZU5lE7mg3W8Q",
-  authDomain: "devid-3f374.firebaseapp.com",
-  projectId: "devid-3f374",
-  storageBucket: "devid-3f374.firebasestorage.app",
-  messagingSenderId: "143462587610",
-  appId: "1:143462587610:web:10e9c6c02d6579c58a59e3"
-};
+<h2>등록된 아이디</h2>
+<ul id="list"></ul>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+<script>
+fetch("users.json")
+  .then(res => res.json())
+  .then(data => {
+    const ul = document.getElementById("list");
 
-// 🔥 핵심: window 붙이기
-window.addUser = async function() {
-  const id = document.getElementById("idInput").value;
-
-  await addDoc(collection(db, "users"), {
-    id: id
+    data.forEach(id => {
+      const li = document.createElement("li");
+      li.innerText = id;
+      ul.appendChild(li);
+    });
   });
-
-  loadUsers();
-}
-
-window.loadUsers = async function() {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  const keyword = document.getElementById("search").value;
-
-  const ul = document.getElementById("list");
-  ul.innerHTML = "";
-
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-
-    if (!data.id.includes(keyword)) return;
-
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${data.id}
-      <button onclick="deleteUser('${docSnap.id}')">삭제</button>
-    `;
-    ul.appendChild(li);
-  });
-}
-
-window.deleteUser = async function(docId) {
-  await deleteDoc(doc(db, "users", docId));
-  loadUsers();
-}
-
-loadUsers();
 </script>
+
+</body>
+</html>
